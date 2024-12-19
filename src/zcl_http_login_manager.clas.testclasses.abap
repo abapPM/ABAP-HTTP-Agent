@@ -26,53 +26,53 @@ CLASS ltcl_login_manager IMPLEMENTATION.
 
   METHOD save.
 
-    CONSTANTS lc_host TYPE string VALUE 'https://abapgit.org/foo/bar'.
-    CONSTANTS lc_auth TYPE string VALUE 'foobar'.
+    CONSTANTS c_host TYPE string VALUE 'https://abapgit.org/foo/bar'.
+    CONSTANTS c_auth TYPE string VALUE 'foobar'.
 
     zcl_http_login_manager=>save(
-      iv_host = lc_host
-      iv_auth = lc_auth ).
+      host = c_host
+      auth = c_auth ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = zcl_http_login_manager=>get( lc_host )
-      exp = lc_auth ).
+      act = zcl_http_login_manager=>get( c_host )
+      exp = c_auth ).
 
   ENDMETHOD.
 
   METHOD encoding.
 
-    DATA lv_auth TYPE string.
+    DATA auth TYPE string.
 
-    lv_auth = zcl_http_login_manager=>set(
-      iv_host     = 'https://github.com/abapGit/abapGit.git'
-      iv_username = c_username
-      iv_password = c_password ).
+    auth = zcl_http_login_manager=>set(
+      host     = 'https://github.com/abapGit/abapGit.git'
+      username = c_username
+      password = c_password ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lv_auth
+      act = auth
       exp = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l' ).
 
   ENDMETHOD.
 
   METHOD same_server.
 
-    CONSTANTS: lc_github1 TYPE string VALUE 'https://github.com/abapGit/abapGit.git',
-               lc_github2 TYPE string VALUE 'https://github.com/larshp/Foobar.git'.
+    CONSTANTS: c_github1 TYPE string VALUE 'https://github.com/abapGit/abapGit.git',
+               c_github2 TYPE string VALUE 'https://github.com/larshp/Foobar.git'.
 
-    DATA: lv_auth1 TYPE string,
-          lv_auth2 TYPE string.
+    DATA: auth1 TYPE string,
+          auth2 TYPE string.
 
     zcl_http_login_manager=>set(
-      iv_host     = lc_github1
-      iv_username = c_username
-      iv_password = c_password ).
+      host     = c_github1
+      username = c_username
+      password = c_password ).
 
-    lv_auth1 = zcl_http_login_manager=>get( lc_github1 ).
-    lv_auth2 = zcl_http_login_manager=>get( lc_github2 ).
+    auth1 = zcl_http_login_manager=>get( c_github1 ).
+    auth2 = zcl_http_login_manager=>get( c_github2 ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lv_auth1
-      exp = lv_auth2 ).
+      act = auth1
+      exp = auth2 ).
 
   ENDMETHOD.
 

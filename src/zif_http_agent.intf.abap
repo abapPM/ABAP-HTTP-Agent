@@ -19,18 +19,18 @@ INTERFACE zif_http_agent PUBLIC.
 
   METHODS global_headers
     RETURNING
-      VALUE(ro_global_headers) TYPE REF TO zcl_abap_string_map.
+      VALUE(result) TYPE REF TO zcl_abap_string_map.
 
   METHODS request
     IMPORTING
-      !iv_url            TYPE string
-      !iv_ssl_id         TYPE ssfapplssl DEFAULT 'ANONYM'
-      !iv_method         TYPE string DEFAULT c_methods-get
-      !io_query          TYPE REF TO zcl_abap_string_map OPTIONAL
-      !io_headers        TYPE REF TO zcl_abap_string_map OPTIONAL
-      !iv_payload        TYPE any OPTIONAL " can be string, xstring
+      !url          TYPE string
+      !ssl_id       TYPE ssfapplssl DEFAULT 'ANONYM'
+      !method       TYPE string DEFAULT c_methods-get
+      !query        TYPE REF TO zcl_abap_string_map OPTIONAL
+      !headers      TYPE REF TO zcl_abap_string_map OPTIONAL
+      !payload      TYPE any OPTIONAL " can be string, xstring
     RETURNING
-      VALUE(ri_response) TYPE REF TO zif_http_response
+      VALUE(result) TYPE REF TO zif_http_response
     RAISING
       zcx_error.
 

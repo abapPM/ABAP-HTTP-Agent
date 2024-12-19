@@ -15,7 +15,7 @@ CLASS zcl_http_agent DEFINITION
 
     CLASS-METHODS create
       RETURNING
-        VALUE(ri_instance) TYPE REF TO zif_http_agent.
+        VALUE(result) TYPE REF TO zif_http_agent.
 
     METHODS constructor.
 
@@ -26,8 +26,8 @@ CLASS zcl_http_agent DEFINITION
 
     CLASS-METHODS attach_payload
       IMPORTING
-        ii_request TYPE REF TO if_http_request
-        iv_payload TYPE any
+        request TYPE REF TO if_http_request
+        payload TYPE any
       RAISING
         zcx_error.
 
@@ -40,16 +40,14 @@ CLASS zcl_http_agent IMPLEMENTATION.
 
   METHOD attach_payload.
 
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA(payload_type) = cl_abap_typedescr=>describe_by_data( payload ).
 
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_payload ).
-
-    IF lo_type->type_kind = cl_abap_typedescr=>typekind_xstring.
-      ii_request->set_data( iv_payload ).
-    ELSEIF lo_type->type_kind = cl_abap_typedescr=>typekind_string.
-      ii_request->set_cdata( iv_payload ).
+    IF payload_type->type_kind = cl_abap_typedescr=>typekind_xstring.
+      request->set_data( payload ).
+    ELSEIF payload_type->type_kind = cl_abap_typedescr=>typekind_string.
+      request->set_cdata( payload ).
     ELSE.
-      zcx_error=>raise( |Unexpected payload type { lo_type->absolute_name }| ).
+      zcx_error=>raise( |Unexpected payload type { payload_type->absolute_name }| ).
     ENDIF.
 
   ENDMETHOD.
@@ -61,66 +59,68 @@ CLASS zcl_http_agent IMPLEMENTATION.
 
 
   METHOD create.
-    CREATE OBJECT ri_instance TYPE zcl_http_agent.
+
+    result = NEW zcl_http_agent( ).
+
   ENDMETHOD.
 
 
   METHOD zif_http_agent~global_headers.
-    ro_global_headers = mo_global_headers.
+
+    result = mo_global_headers.
+
   ENDMETHOD.
 
 
   METHOD zif_http_agent~request.
 
     DATA:
-      li_client  TYPE REF TO if_http_client,
-      lv_code    TYPE i,
-      lv_message TYPE string.
-
-    FIELD-SYMBOLS <ls_entry> LIKE LINE OF io_query->mt_entries.
+      http_client TYPE REF TO if_http_client,
+      status_code TYPE i,
+      message     TYPE string.
 
     " TODO: Add proxy support
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = iv_url
-        ssl_id = iv_ssl_id
+        url    = url
+        ssl_id = ssl_id
       IMPORTING
-        client = li_client ).
+        client = http_client ).
 
-    li_client->request->set_version( if_http_request=>co_protocol_version_1_1 ).
-    li_client->request->set_method( iv_method ).
+    http_client->request->set_version( if_http_request=>co_protocol_version_1_1 ).
+    http_client->request->set_method( method ).
 
-    IF io_query IS BOUND.
-      LOOP AT io_query->mt_entries ASSIGNING <ls_entry>.
-        li_client->request->set_form_field(
-          name  = <ls_entry>-k
-          value = <ls_entry>-v ).
+    IF query IS BOUND.
+      LOOP AT query->mt_entries ASSIGNING FIELD-SYMBOL(<entry>).
+        http_client->request->set_form_field(
+          name  = <entry>-k
+          value = <entry>-v ).
       ENDLOOP.
     ENDIF.
 
-    LOOP AT mo_global_headers->mt_entries ASSIGNING <ls_entry>.
-      li_client->request->set_header_field(
-        name  = <ls_entry>-k
-        value = <ls_entry>-v ).
+    LOOP AT mo_global_headers->mt_entries ASSIGNING <entry>.
+      http_client->request->set_header_field(
+        name  = <entry>-k
+        value = <entry>-v ).
     ENDLOOP.
 
-    IF io_headers IS BOUND.
-      LOOP AT io_headers->mt_entries ASSIGNING <ls_entry>.
-        li_client->request->set_header_field(
-          name  = <ls_entry>-k
-          value = <ls_entry>-v ).
+    IF headers IS BOUND.
+      LOOP AT headers->mt_entries ASSIGNING <entry>.
+        http_client->request->set_header_field(
+          name  = <entry>-k
+          value = <entry>-v ).
       ENDLOOP.
     ENDIF.
 
-    IF iv_method = zif_http_agent=>c_methods-post
-      OR iv_method = zif_http_agent=>c_methods-put
-      OR iv_method = zif_http_agent=>c_methods-patch.
+    IF method = zif_http_agent=>c_methods-post
+      OR method = zif_http_agent=>c_methods-put
+      OR method = zif_http_agent=>c_methods-patch.
       attach_payload(
-        ii_request = li_client->request
-        iv_payload = iv_payload ).
+        request = http_client->request
+        payload = payload ).
     ENDIF.
 
-    li_client->send(
+    http_client->send(
       EXCEPTIONS
         http_communication_failure = 1
         http_invalid_state         = 2
@@ -128,7 +128,7 @@ CLASS zcl_http_agent IMPLEMENTATION.
         http_invalid_timeout       = 4
         OTHERS                     = 5 ).
     IF sy-subrc = 0.
-      li_client->receive(
+      http_client->receive(
         EXCEPTIONS
           http_communication_failure = 1
           http_invalid_state         = 2
@@ -137,14 +137,14 @@ CLASS zcl_http_agent IMPLEMENTATION.
     ENDIF.
 
     IF sy-subrc <> 0.
-      li_client->get_last_error(
+      http_client->get_last_error(
         IMPORTING
-          code    = lv_code
-          message = lv_message ).
-      zcx_error=>raise( |HTTP error: [{ lv_code }] { lv_message }| ).
+          code    = status_code
+          message = message ).
+      zcx_error=>raise( |HTTP error: [{ status_code }] { message }| ).
     ENDIF.
 
-    ri_response = lcl_http_response=>create( li_client ).
+    result = lcl_http_response=>create( http_client ).
 
   ENDMETHOD.
 ENDCLASS.
