@@ -4,9 +4,9 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?color=success)](https://github.com/abapPM/.github/blob/main/CODE_OF_CONDUCT.md)
 [![REUSE Status](https://api.reuse.software/badge/github.com/abapPM/ABAP-HTTP)](https://api.reuse.software/info/github.com/abapPM/ABAP-HTTP)
 
-# Error
+# HTTP Agent
 
-General purpose exception.
+Easy to use HTTP agent and login manager with request/response handling.
 
 NO WARRANTIES, [MIT License](https://github.com/abapPM/ABAP-HTTP/blob/main/LICENSE)
 
@@ -19,16 +19,16 @@ DATA(agent) = zcl_http_agent=>create( ).
 
 " Optionally set headers
 agent->global_headers( )->set(
-    iv_key = zif_http_agent=>c_header-accept
-    iv_val = zif_http_agent=>c_content_type-json ).
+  iv_key = zif_http_agent=>c_header-accept
+  iv_val = zif_http_agent=>c_content_type-json ).
 
 agent->global_headers( )->set(
-    iv_key = zif_http_agent=>c_header-content_type
-    iv_val = zif_http_agent=>c_content_type-json ).
+  iv_key = zif_http_agent=>c_header-content_type
+  iv_val = zif_http_agent=>c_content_type-json ).
 
 agent->global_headers( )->set(
-    iv_key = zif_http_agent=>c_header-user_agent
-    iv_val = `abap 7.5` ).
+  iv_key = zif_http_agent=>c_header-user_agent
+  iv_val = `abap 7.5` ).
 ```
 
 Get and set authorization tokens:
