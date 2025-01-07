@@ -11,7 +11,7 @@
   ],
   "homepage": "https://abappm.com",
   "bugs": {
-    "url": "https://github.com/abapPM/ABAP-HTTP/issues"
+    "url": "https://github.com/abapPM/ABAP-HTTP-Agent/issues"
   },
   "license": "MIT",
   "author": {
@@ -28,7 +28,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abapPM/ABAP-HTTP.git"
+    "url": "git+https://github.com/abapPM/ABAP-HTTP-Agent.git"
   },
   "funding": {
     "type": "github",
