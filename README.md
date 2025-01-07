@@ -1,14 +1,14 @@
-![Version](https://img.shields.io/endpoint?url=https://shield.abap.space/version-shield-json/github/abapPM/ABAP-HTTP/src/zif_http_agent.intf.abap/c_version&label=Version&color=blue)
+![Version](https://img.shields.io/endpoint?url=https://shield.abap.space/version-shield-json/github/abapPM/ABAP-HTTP-Agent/src/zif_http_agent.intf.abap/c_version&label=Version&color=blue)
 
-[![License](https://img.shields.io/github/license/abapPM/ABAP-HTTP?label=License&color=success)](https://github.com/abapPM/ABAP-HTTP/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/abapPM/ABAP-HTTP-Agent?label=License&color=success)](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main/LICENSE)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?color=success)](https://github.com/abapPM/.github/blob/main/CODE_OF_CONDUCT.md)
-[![REUSE Status](https://api.reuse.software/badge/github.com/abapPM/ABAP-HTTP)](https://api.reuse.software/info/github.com/abapPM/ABAP-HTTP)
+[![REUSE Status](https://api.reuse.software/badge/github.com/abapPM/ABAP-HTTP-Agent)](https://api.reuse.software/info/github.com/abapPM/ABAP-HTTP-Agent)
 
 # HTTP Agent
 
 Easy to use HTTP agent and login manager with request/response handling.
 
-NO WARRANTIES, [MIT License](https://github.com/abapPM/ABAP-HTTP/blob/main/LICENSE)
+NO WARRANTIES, [MIT License](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main/LICENSE)
 
 ## Usage
 
@@ -86,7 +86,7 @@ IMPORT '*' TO '/namespace/$1$2' FROM 'http-agent'.
 
 ## Contributions
 
-All contributions are welcome! Read our [Contribution Guidelines](https://github.com/abapPM/ABAP-HTTP/blob/main/CONTRIBUTING.md), fork this repo, and create a pull request.
+All contributions are welcome! Read our [Contribution Guidelines](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main/CONTRIBUTING.md), fork this repo, and create a pull request.
 
 You can install the developer version of ABAP Error using [abapGit](https://github.com/abapGit/abapGit) either by creating a new online repository for https://github.com/abapPM/ABAP-HTTP.
 
