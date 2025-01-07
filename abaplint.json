@@ -125,7 +125,9 @@
     "in_statement_indentation": false,
     "indentation": true,
     "inline_data_old_versions": true,
-    "intf_referencing_clas": true,
+    "intf_referencing_clas": {
+      "allow": ["zcl_abappm_string_map"]
+    },
     "invalid_table_index": true,
     "keep_single_parameter_on_one_line": true,
     "keyword_case": true,
