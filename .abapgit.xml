@@ -2,14 +2,14 @@
 <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
  <asx:values>
   <DATA>
-   <NAME>http</NAME>
+   <NAME>http-agent</NAME>
    <MASTER_LANGUAGE>E</MASTER_LANGUAGE>
    <STARTING_FOLDER>/src/</STARTING_FOLDER>
    <FOLDER_LOGIC>PREFIX</FOLDER_LOGIC>
    <REQUIREMENTS>
     <item>
      <COMPONENT>SAP_BASIS</COMPONENT>
-     <MIN_RELEASE>740</MIN_RELEASE>
+     <MIN_RELEASE>750</MIN_RELEASE>
     </item>
    </REQUIREMENTS>
    <VERSION_CONSTANT>ZIF_HTTP_AGENT=&gt;C_VERSION</VERSION_CONSTANT>
