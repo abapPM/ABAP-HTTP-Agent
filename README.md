@@ -90,7 +90,7 @@ All contributions are welcome! Read our [Contribution Guidelines](https://github
 
 You can install the developer version of ABAP Error using [abapGit](https://github.com/abapGit/abapGit) either by creating a new online repository for https://github.com/abapPM/ABAP-HTTP.
 
-Recommended SAP package: `$HTTP`
+Recommended SAP package: `$HTTP-AGENT`
 
 ## About
 
