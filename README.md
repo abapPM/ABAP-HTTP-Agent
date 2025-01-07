@@ -72,9 +72,9 @@ SAP Basis 7.50 or higher
 
 ## Installation
 
-Install the `http-agent` module in your system using [apm](https://abappm.com).
+Install `http-agent` as a global module in your system using [apm](https://abappm.com).
 
-## Import
+or 
 
 Specify the `http-agent` module as a dependency in your project and import it to your namespace using [apm](https://abappm.com).
 
