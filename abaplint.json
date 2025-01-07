@@ -4,6 +4,16 @@
       "files": "/src/**/*.*",
       "folder": "/deps",
       "url": "https://github.com/abaplint/deps"
+    },
+    {
+      "files": "/src/**/*.*",
+      "folder": "/deps2",
+      "url": "https://github.com/abapPM/ABAP-Error"
+    },
+    {
+      "files": "/src/**/*.*",
+      "folder": "/deps3",
+      "url": "https://github.com/sbcgua/abap-string-map"
     }
   ],
   "global": {
