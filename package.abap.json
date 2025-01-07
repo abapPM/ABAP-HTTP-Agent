@@ -1,0 +1,46 @@
+{
+  "name": "http-agent",
+  "version": "1.0.0",
+  "description": "HTTP Agent",
+  "keywords": [
+    "abap",
+    "apm",
+    "http",
+    "agent",
+    "sap"
+  ],
+  "homepage": "https://abappm.com",
+  "bugs": {
+    "url": "https://github.com/abapPM/ABAP-HTTP/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Marc Bernard",
+    "url": "https://github.com/mbtools",
+    "email": "marc@abappm.com"
+  },
+  "maintainers": [
+    {
+      "name": "Marc Bernard",
+      "url": "https://github.com/mbtools",
+      "email": "marc@abappm.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abapPM/ABAP-HTTP.git"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/abappm"
+  },
+  "dependencies": {
+    "ajson": "^1.1.10",
+    "string-map": "^1.0.0",
+    "error": "^1.0.0"
+  },
+  "engines": {
+    "abap": ">=7.50",
+    "apm": ">=1"
+  }
+}
