@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: http-agent
+Upstream-Name: ABAP-HTTP-Agent
 Upstream-Contact: Marc Bernard <hello@abappm.com>
 Source: https://github.com/abapPM/ABAP-HTTP-Agent
 
