@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/endpoint?url=https://shield.abap.space/version-shield-json/github/abapPM/ABAP-HTTP-Agent/src/zif_http_agent.intf.abap/c_version&label=Version&color=blue)
+![Version](https://img.shields.io/endpoint?url=https://shield.abappm.com/github/abapPM/ABAP-HTTP-Agent/src/zif_http_agent.intf.abap/c_version&label=Version&color=blue)
 
 [![License](https://img.shields.io/github/license/abapPM/ABAP-HTTP-Agent?label=License&color=success)](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main/LICENSE)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?color=success)](https://github.com/abapPM/.github/blob/main/CODE_OF_CONDUCT.md)
@@ -74,28 +74,22 @@ SAP Basis 7.50 or higher
 
 Install `http-agent` as a global module in your system using [apm](https://abappm.com).
 
-or 
+or
 
 Specify the `http-agent` module as a dependency in your project and import it to your namespace using [apm](https://abappm.com).
-
-```abap
-IMPORT '*' TO 'z$1_your_project$2' FROM 'http-agent'.
-" or
-IMPORT '*' TO '/namespace/$1$2' FROM 'http-agent'.
-```
 
 ## Contributions
 
 All contributions are welcome! Read our [Contribution Guidelines](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main/CONTRIBUTING.md), fork this repo, and create a pull request.
 
-You can install the developer version of ABAP Error using [abapGit](https://github.com/abapGit/abapGit) either by creating a new online repository for https://github.com/abapPM/ABAP-HTTP.
+You can install the developer version of ABAP HTTP Agent using [abapGit](https://github.com/abapGit/abapGit) either by creating a new online repository for `https://github.com/abapPM/ABAP-HTTP-Agent`.
 
 Recommended SAP package: `$HTTP-AGENT`
 
 ## About
 
-Made with ❤️ in Canada
+Made with ❤ in Canada
 
-Copyright 2024 apm.to Inc. <https://apm.to>
+Copyright 2025 apm.to Inc. <https://apm.to>
 
-Follow [@marcf.be](https://bsky.app/profile/marcf.be) on Blueksy
+Follow [@marcf.be](https://bsky.app/profile/marcf.be) on Blueksy and [@marcfbe](https://linkedin.com/in/marcfbe) or LinkedIn
