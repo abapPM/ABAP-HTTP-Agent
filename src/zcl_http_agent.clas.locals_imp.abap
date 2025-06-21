@@ -70,7 +70,7 @@ CLASS lcl_http_response IMPLEMENTATION.
     TRY.
         result = zcl_ajson=>parse( zif_http_response~cdata( ) ).
       CATCH zcx_ajson_error INTO DATA(error).
-        zcx_error=>raise_with_text( error ).
+        RAISE EXCEPTION TYPE zcx_error_prev EXPORTING previous = error.
     ENDTRY.
 
   ENDMETHOD.

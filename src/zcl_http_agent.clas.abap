@@ -50,7 +50,9 @@ CLASS zcl_http_agent IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_char.
         request->set_cdata( |{ payload }| ).
       WHEN OTHERS.
-        zcx_error=>raise( |Unexpected payload type { payload_type->absolute_name }| ).
+        RAISE EXCEPTION TYPE zcx_error_text
+          EXPORTING
+            text = |Unexpected payload type { payload_type->absolute_name }|.
     ENDCASE.
 
   ENDMETHOD.
@@ -146,7 +148,10 @@ CLASS zcl_http_agent IMPLEMENTATION.
         IMPORTING
           code    = status_code
           message = message ).
-      zcx_error=>raise( |HTTP error: [{ status_code }] { message }| ).
+
+      RAISE EXCEPTION TYPE zcx_error_text
+        EXPORTING
+          text = |HTTP error: [{ status_code }] { message }|.
     ENDIF.
 
     result = lcl_http_response=>create( http_client ).
