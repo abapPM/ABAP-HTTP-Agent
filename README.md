@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/endpoint?url=https://shield.abappm.com/github/abapPM/ABAP-HTTP-Agent/src/zif_http_agent.intf.abap/c_version&label=Version&color=blue)
+![Version](https://img.shields.io/endpoint?url=https://shield.abappm.com/github/abapPM/ABAP-HTTP-Agent/src/#apmg#if_http_agent.intf.abap/c_version&label=Version&color=blue)
 
 [![License](https://img.shields.io/github/license/abapPM/ABAP-HTTP-Agent?label=License&color=success)](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main/LICENSE)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?color=success)](https://github.com/abapPM/.github/blob/main/CODE_OF_CONDUCT.md)
@@ -15,19 +15,19 @@ NO WARRANTIES, [MIT License](https://github.com/abapPM/ABAP-HTTP-Agent/blob/main
 Initialize an HTTP agent and set header fields:
 
 ```abap
-DATA(agent) = zcl_http_agent=>create( ).
+DATA(agent) = /apmg/cl_http_agent=>create( ).
 
 " Optionally set headers
 agent->global_headers( )->set(
-  iv_key = zif_http_agent=>c_header-accept
-  iv_val = zif_http_agent=>c_content_type-json ).
+  iv_key = /apmg/if_http_agent=>c_header-accept
+  iv_val = /apmg/if_http_agent=>c_content_type-json ).
 
 agent->global_headers( )->set(
-  iv_key = zif_http_agent=>c_header-content_type
-  iv_val = zif_http_agent=>c_content_type-json ).
+  iv_key = /apmg/if_http_agent=>c_header-content_type
+  iv_val = /apmg/if_http_agent=>c_content_type-json ).
 
 agent->global_headers( )->set(
-  iv_key = zif_http_agent=>c_header-user_agent
+  iv_key = /apmg/if_http_agent=>c_header-user_agent
   iv_val = `abap 7.5` ).
 ```
 
@@ -36,10 +36,10 @@ Get and set authorization tokens:
 ```abap
 DATA(host) = 'api.github.com'.
 
-IF zcl_http_login_manager=>get( host ) IS NOT INITIAL.
+IF /apmg/cl_http_login_manager=>get( host ) IS NOT INITIAL.
   agent->global_headers( )->set(
-    iv_key = zif_http_agent=>c_header-authorization
-    iv_val = zcl_http_login_manager=>get( host ) ).
+    iv_key = /apmg/if_http_agent=>c_header-authorization
+    iv_val = /apmg/cl_http_login_manager=>get( host ) ).
 ENDIF.
 ```
 
@@ -58,7 +58,7 @@ Put request with payload:
 ```abap
 DATA(response) = agent->request(
   url     = 'https://myserver.com/'
-  method  = zif_abappm_http_agent=>c_method-put
+  method  = /apmg/if_abappm_http_agent=>c_method-put
   payload = json ).
 
 IF response->is_ok( ) = abap_false.
@@ -84,7 +84,7 @@ All contributions are welcome! Read our [Contribution Guidelines](https://github
 
 You can install the developer version of ABAP HTTP Agent using [abapGit](https://github.com/abapGit/abapGit) either by creating a new online repository for `https://github.com/abapPM/ABAP-HTTP-Agent`.
 
-Recommended SAP package: `$HTTP-AGENT`
+Recommended SAP package: `/APMG/HTTP-AGENT`
 
 ## About
 
