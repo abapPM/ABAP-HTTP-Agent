@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOINTERF>
-    <CLSNAME>ZIF_HTTP_RESPONSE</CLSNAME>
+    <CLSNAME>/APMG/IF_HTTP_RESPONSE</CLSNAME>
     <LANGU>E</LANGU>
     <DESCRIPT>HTTP Response</DESCRIPT>
     <EXPOSURE>2</EXPOSURE>

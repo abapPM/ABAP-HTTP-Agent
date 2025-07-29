@@ -1,4 +1,4 @@
-CLASS zcl_http_agent DEFINITION
+CLASS /apmg/cl_http_agent DEFINITION
   PUBLIC
   FINAL
   CREATE PRIVATE.
@@ -11,11 +11,11 @@ CLASS zcl_http_agent DEFINITION
 ************************************************************************
   PUBLIC SECTION.
 
-    INTERFACES zif_http_agent.
+    INTERFACES /apmg/if_http_agent.
 
     CLASS-METHODS create
       RETURNING
-        VALUE(result) TYPE REF TO zif_http_agent.
+        VALUE(result) TYPE REF TO /apmg/if_http_agent.
 
     METHODS constructor.
 
@@ -29,13 +29,13 @@ CLASS zcl_http_agent DEFINITION
         request TYPE REF TO if_http_request
         payload TYPE any
       RAISING
-        zcx_error.
+        /apmg/cx_error.
 
 ENDCLASS.
 
 
 
-CLASS zcl_http_agent IMPLEMENTATION.
+CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
 
   METHOD attach_payload.
@@ -50,7 +50,7 @@ CLASS zcl_http_agent IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_char.
         request->set_cdata( |{ payload }| ).
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE zcx_error_text
+        RAISE EXCEPTION TYPE /apmg/cx_error_text
           EXPORTING
             text = |Unexpected payload type { payload_type->absolute_name }|.
     ENDCASE.
@@ -67,19 +67,19 @@ CLASS zcl_http_agent IMPLEMENTATION.
 
   METHOD create.
 
-    result = NEW zcl_http_agent( ).
+    result = NEW /apmg/cl_http_agent( ).
 
   ENDMETHOD.
 
 
-  METHOD zif_http_agent~global_headers.
+  METHOD /apmg/if_http_agent~global_headers.
 
     result = global_headers.
 
   ENDMETHOD.
 
 
-  METHOD zif_http_agent~request.
+  METHOD /apmg/if_http_agent~request.
 
     DATA:
       http_client TYPE REF TO if_http_client,
@@ -119,9 +119,9 @@ CLASS zcl_http_agent IMPLEMENTATION.
       ENDLOOP.
     ENDIF.
 
-    IF method = zif_http_agent=>c_method-post
-      OR method = zif_http_agent=>c_method-put
-      OR method = zif_http_agent=>c_method-patch.
+    IF method = /apmg/if_http_agent=>c_method-post
+      OR method = /apmg/if_http_agent=>c_method-put
+      OR method = /apmg/if_http_agent=>c_method-patch.
       attach_payload(
         request = http_client->request
         payload = payload ).
@@ -149,7 +149,7 @@ CLASS zcl_http_agent IMPLEMENTATION.
           code    = status_code
           message = message ).
 
-      RAISE EXCEPTION TYPE zcx_error_text
+      RAISE EXCEPTION TYPE /apmg/cx_error_text
         EXPORTING
           text = |HTTP error: [{ status_code }] { message }|.
     ENDIF.

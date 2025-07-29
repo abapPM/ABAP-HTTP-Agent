@@ -1,4 +1,4 @@
-INTERFACE zif_http_agent PUBLIC.
+INTERFACE /apmg/if_http_agent PUBLIC.
 
 ************************************************************************
 * HTTP Agent
@@ -46,8 +46,8 @@ INTERFACE zif_http_agent PUBLIC.
       !headers      TYPE REF TO zcl_abap_string_map OPTIONAL
       !payload      TYPE any OPTIONAL " can be char, string, xstring
     RETURNING
-      VALUE(result) TYPE REF TO zif_http_response
+      VALUE(result) TYPE REF TO /apmg/if_http_response
     RAISING
-      zcx_error.
+      /apmg/cx_error.
 
 ENDINTERFACE.
