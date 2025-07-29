@@ -2,13 +2,13 @@ CLASS lcl_http_response DEFINITION FINAL.
 
   PUBLIC SECTION.
 
-    INTERFACES zif_http_response.
+    INTERFACES /apmg/if_http_response.
 
     CLASS-METHODS create
       IMPORTING
         http_client   TYPE REF TO if_http_client
       RETURNING
-        VALUE(result) TYPE REF TO zif_http_response.
+        VALUE(result) TYPE REF TO /apmg/if_http_response.
 
   PRIVATE SECTION.
 
@@ -29,32 +29,32 @@ CLASS lcl_http_response IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD zif_http_response~close.
+  METHOD /apmg/if_http_response~close.
 
     http_client->close( ).
 
   ENDMETHOD.
 
-  METHOD zif_http_response~is_ok.
+  METHOD /apmg/if_http_response~is_ok.
 
-    DATA(status_code) = zif_http_response~code( ).
+    DATA(status_code) = /apmg/if_http_response~code( ).
     result = xsdbool( status_code >= 200 AND status_code < 300 ).
 
   ENDMETHOD.
 
-  METHOD zif_http_response~data.
+  METHOD /apmg/if_http_response~data.
 
     result = http_response->get_data( ).
 
   ENDMETHOD.
 
-  METHOD zif_http_response~cdata.
+  METHOD /apmg/if_http_response~cdata.
 
     result = http_response->get_cdata( ).
 
   ENDMETHOD.
 
-  METHOD zif_http_response~code.
+  METHOD /apmg/if_http_response~code.
 
     DATA msg TYPE string ##NEEDED.
 
@@ -65,23 +65,23 @@ CLASS lcl_http_response IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD zif_http_response~json.
+  METHOD /apmg/if_http_response~json.
 
     TRY.
-        result = zcl_ajson=>parse( zif_http_response~cdata( ) ).
+        result = zcl_ajson=>parse( /apmg/if_http_response~cdata( ) ).
       CATCH zcx_ajson_error INTO DATA(error).
-        RAISE EXCEPTION TYPE zcx_error_prev EXPORTING previous = error.
+        RAISE EXCEPTION TYPE /apmg/cx_error_prev EXPORTING previous = error.
     ENDTRY.
 
   ENDMETHOD.
 
-  METHOD zif_http_response~error.
+  METHOD /apmg/if_http_response~error.
 
     result = http_response->get_cdata( ).
 
   ENDMETHOD.
 
-  METHOD zif_http_response~headers.
+  METHOD /apmg/if_http_response~headers.
 
     DATA headers TYPE tihttpnvp.
 

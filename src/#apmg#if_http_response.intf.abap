@@ -1,4 +1,4 @@
-INTERFACE zif_http_response PUBLIC.
+INTERFACE /apmg/if_http_response PUBLIC.
 
 ************************************************************************
 * HTTP Response
@@ -19,7 +19,7 @@ INTERFACE zif_http_response PUBLIC.
     RETURNING
       VALUE(result) TYPE REF TO zif_ajson
     RAISING
-      zcx_error.
+      /apmg/cx_error.
 
   METHODS is_ok
     RETURNING
@@ -37,7 +37,7 @@ INTERFACE zif_http_response PUBLIC.
     RETURNING
       VALUE(result) TYPE REF TO zcl_abap_string_map
     RAISING
-      zcx_error.
+      /apmg/cx_error.
 
   METHODS close.
 

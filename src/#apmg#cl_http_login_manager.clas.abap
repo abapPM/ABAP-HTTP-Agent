@@ -1,4 +1,4 @@
-CLASS zcl_http_login_manager DEFINITION
+CLASS /apmg/cl_http_login_manager DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC.
@@ -44,6 +44,12 @@ CLASS zcl_http_login_manager DEFINITION
 
     CLASS-DATA auths TYPE TABLE OF ty_auth WITH DEFAULT KEY.
 
+    CLASS-METHODS get_host
+      IMPORTING
+        !host         TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+
     CLASS-METHODS append
       IMPORTING
         !host TYPE string
@@ -53,14 +59,16 @@ ENDCLASS.
 
 
 
-CLASS zcl_http_login_manager IMPLEMENTATION.
+CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
 
 
   METHOD append.
 
-    IF NOT line_exists( auths[ host = host ] ).
+    DATA(hostname) = get_host( host ).
+
+    IF NOT line_exists( auths[ host = hostname ] ).
       APPEND INITIAL LINE TO auths ASSIGNING FIELD-SYMBOL(<auth>).
-      <auth>-host = host.
+      <auth>-host = hostname.
       <auth>-auth = auth.
     ENDIF.
 
@@ -76,10 +84,27 @@ CLASS zcl_http_login_manager IMPLEMENTATION.
 
   METHOD get.
 
-    READ TABLE auths INTO DATA(auth) WITH KEY host = host.
+    READ TABLE auths INTO DATA(auth) WITH KEY host = get_host( host ).
     IF sy-subrc = 0.
       result = auth-auth.
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD get_host.
+
+    " If it's a URL, use host:port, otherwise just take the input
+    TRY.
+        DATA(url) = /apmg/cl_url=>parse( host )->components.
+
+        result = url-host.
+        IF url-port IS NOT INITIAL.
+          result = |{ result }:{ url-port }|.
+        ENDIF.
+      CATCH /apmg/cx_error.
+        result = host.
+    ENDTRY.
 
   ENDMETHOD.
 
@@ -102,12 +127,10 @@ CLASS zcl_http_login_manager IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    result = cl_http_utility=>encode_base64( |{ username }:{ password }| ).
-
     IF is_basic = abap_true.
-      result = |Basic { result }|.
+      result = |Basic { cl_http_utility=>encode_base64( |{ username }:{ password }| ) }|.
     ELSE.
-      result = |Bearer { result }|.
+      result = |Bearer { password }|.
     ENDIF.
 
     append( host = host
