@@ -96,11 +96,11 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
 
     " If it's a URL, use host:port, otherwise just take the input
     TRY.
-        DATA(url) = /apmg/cl_url=>parse( host ).
+        DATA(url) = /apmg/cl_url=>parse( host )->components.
 
-        result = url->components-host.
-        IF url->components-port IS NOT INITIAL.
-          result = |{ result }:{ url->components-port }|.
+        result = url-host.
+        IF url-port IS NOT INITIAL.
+          result = |{ result }:{ url-port }|.
         ENDIF.
       CATCH /apmg/cx_error.
         result = host.
