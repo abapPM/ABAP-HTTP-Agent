@@ -2,12 +2,12 @@
   "name": "http-agent",
   "version": "1.0.1",
   "description": "HTTP Agent",
-  "type": "module",  
+  "type": "module",
   "keywords": [
     "abap",
+    "agent",
     "apm",
     "http",
-    "agent",
     "sap"
   ],
   "homepage": "https://abappm.com",
@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "ajson": "^1.1.10",
-    "string-map": "^1.0.0",
     "error": "^1.0.0",
+    "string-map": "^1.0.0",
     "url": "^1.0.0"
   },
   "engines": {
