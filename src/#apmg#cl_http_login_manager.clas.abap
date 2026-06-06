@@ -17,12 +17,18 @@ CLASS /apmg/cl_http_login_manager DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS set
+    CLASS-METHODS set_basic
       IMPORTING
         !host         TYPE csequence
         !username     TYPE csequence
         !password     TYPE csequence
-        !is_basic     TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS set_token
+      IMPORTING
+        !host         TYPE csequence
+        !token        TYPE csequence
       RETURNING
         VALUE(result) TYPE string.
 
@@ -119,7 +125,7 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set.
+  METHOD set_basic.
 
     ASSERT host IS NOT INITIAL.
 
@@ -127,11 +133,23 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    IF is_basic = abap_true.
-      result = |Basic { cl_http_utility=>encode_base64( |{ username }:{ password }| ) }|.
-    ELSE.
-      result = |Bearer { password }|.
+    result = |Basic { cl_http_utility=>encode_base64( |{ username }:{ password }| ) }|.
+
+    append( host = host
+            auth = result ).
+
+  ENDMETHOD.
+
+
+  METHOD set_token.
+
+    ASSERT host IS NOT INITIAL.
+
+    IF token IS INITIAL.
+      RETURN.
     ENDIF.
+
+    result = |Bearer { token }|.
 
     append( host = host
             auth = result ).

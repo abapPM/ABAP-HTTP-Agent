@@ -43,11 +43,10 @@ CLASS ltcl_login_manager IMPLEMENTATION.
 
   METHOD basic_auth.
 
-    DATA(auth) = /apmg/cl_http_login_manager=>set(
+    DATA(auth) = /apmg/cl_http_login_manager=>set_basic(
       host     = 'https://github.com/abapGit/abapGit.git'
       username = c_username
-      password = c_password
-      is_basic = abap_true ).
+      password = c_password ).
 
     cl_abap_unit_assert=>assert_equals(
       act = auth
@@ -57,11 +56,9 @@ CLASS ltcl_login_manager IMPLEMENTATION.
 
   METHOD bearer_auth.
 
-    DATA(auth) = /apmg/cl_http_login_manager=>set(
-      host     = 'https://github.com/abapGit/abapGit.git'
-      username = c_username
-      password = c_token
-      is_basic = abap_false ).
+    DATA(auth) = /apmg/cl_http_login_manager=>set_token(
+      host  = 'https://github.com/abapGit/abapGit.git'
+      token = c_token ).
 
     cl_abap_unit_assert=>assert_equals(
       act = auth
@@ -74,7 +71,7 @@ CLASS ltcl_login_manager IMPLEMENTATION.
     CONSTANTS: c_github1 TYPE string VALUE 'https://github.com/abapGit/abapGit.git',
                c_github2 TYPE string VALUE 'https://github.com/larshp/Foobar.git'.
 
-    /apmg/cl_http_login_manager=>set(
+    /apmg/cl_http_login_manager=>set_basic(
       host     = c_github1
       username = c_username
       password = c_password ).

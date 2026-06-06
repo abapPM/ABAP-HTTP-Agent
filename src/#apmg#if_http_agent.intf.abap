@@ -7,7 +7,7 @@ INTERFACE /apmg/if_http_agent PUBLIC.
 * SPDX-License-Identifier: MIT
 ************************************************************************
 
-  CONSTANTS c_version TYPE string VALUE '1.0.1' ##NEEDED.
+  CONSTANTS c_version TYPE string VALUE '1.1.0' ##NEEDED.
 
   CONSTANTS:
     BEGIN OF c_method,
