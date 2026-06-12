@@ -16,6 +16,7 @@ CLASS /apmg/cl_http_agent DEFINITION
     CLASS-METHODS create
       IMPORTING
         !rfc_destination TYPE rfcdest OPTIONAL
+        !ssl_id          TYPE ssfapplssl DEFAULT 'ANONYM'
         !proxy_host      TYPE string OPTIONAL
         !proxy_service   TYPE string OPTIONAL
         !proxy_user      TYPE string OPTIONAL
@@ -26,6 +27,7 @@ CLASS /apmg/cl_http_agent DEFINITION
     METHODS constructor
       IMPORTING
         !rfc_destination TYPE rfcdest
+        !ssl_id          TYPE ssfapplssl
         !proxy_host      TYPE string
         !proxy_service   TYPE string
         !proxy_user      TYPE string
@@ -36,6 +38,7 @@ CLASS /apmg/cl_http_agent DEFINITION
 
     DATA:
       rfc_destination TYPE rfcdest,
+      ssl_id          TYPE ssfapplssl,
       proxy_host      TYPE string,
       proxy_service   TYPE string,
       proxy_user      TYPE string,
@@ -45,7 +48,6 @@ CLASS /apmg/cl_http_agent DEFINITION
     METHODS get_http_client
       IMPORTING
         !url          TYPE string
-        !ssl_id       TYPE ssfapplssl
       RETURNING
         VALUE(result) TYPE REF TO if_http_client
       RAISING
@@ -54,7 +56,6 @@ CLASS /apmg/cl_http_agent DEFINITION
     METHODS get_connection_longtext
       IMPORTING
         !host         TYPE string
-        !ssl_id       TYPE ssfapplssl
       RETURNING
         VALUE(result) TYPE string.
 
@@ -81,11 +82,7 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
   METHOD /apmg/if_http_agent~request.
 
-    DATA:
-      status_code TYPE i,
-      message     TYPE string.
-
-    DATA(http_client) = get_http_client( url = url ssl_id = ssl_id ).
+    DATA(http_client) = get_http_client( url = url ).
 
     http_client->request->set_version( if_http_request=>co_protocol_version_1_1 ).
     http_client->request->set_method( method ).
@@ -144,8 +141,8 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
     IF sy-subrc <> 0.
       http_client->get_last_error(
         IMPORTING
-          code    = status_code
-          message = message ).
+          code    = DATA(status_code)
+          message = DATA(message) ).
 
       RAISE EXCEPTION TYPE /apmg/cx_error_text
         EXPORTING
@@ -180,6 +177,7 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
   METHOD constructor.
 
     me->rfc_destination = rfc_destination.
+    me->ssl_id          = ssl_id.
     me->proxy_host      = proxy_host.
     me->proxy_service   = proxy_service.
     me->proxy_user      = proxy_user.
@@ -194,6 +192,7 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
     result = NEW /apmg/cl_http_agent(
       rfc_destination = rfc_destination
+      ssl_id          = ssl_id
       proxy_host      = proxy_host
       proxy_service   = proxy_service
       proxy_user      = proxy_user
@@ -204,8 +203,8 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
   METHOD get_connection_longtext.
 
-    " TODO: Full link
-    CONSTANTS lc_docs TYPE string VALUE 'https://docs.abappm.com/'.
+    " TODO: Replace with full link once docs are available
+    CONSTANTS c_docs TYPE string VALUE 'https://docs.abappm.com/'.
 
     IF rfc_destination IS INITIAL.
       IF proxy_host IS NOT INITIAL.
@@ -220,39 +219,24 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
     result = result
       && |Check system parameters (transaction |
-      && /apmg/cl_apm_html=>create( )->a(
-        iv_txt   = 'RZ10'
-        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=RZ10|
-        iv_class = 'no-pad' )
+      && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=RZ10" class="no-pad">RZ10</a>|
       && |), SSL setup (transaction |
-      && /apmg/cl_apm_html=>create( )->a(
-        iv_txt   = 'STRUST'
-        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=STRUST|
-        iv_class = 'no-pad' )
+      && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=STRUST" class="no-pad">STRUST</a>|
       && |), Internet connection monitor (transaction |
-      && /apmg/cl_apm_html=>create( )->a(
-        iv_txt   = 'SMICM'
-        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SMICM|
-        iv_class = 'no-pad' )
+      && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SMICM" class="no-pad">SMICM</a>|
       && |)|.
 
     IF rfc_destination IS NOT INITIAL.
       result = result
         && |, and RFC configuration (|
-        && /apmg/cl_apm_html=>create( )->a(
-          iv_txt   = 'SM59'
-          iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SM59|
-          iv_class = 'no-pad' )
+        && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SM59" class="no-pad">SM59</a>|
         && |)|.
     ENDIF.
 
     IF proxy IS NOT INITIAL.
       result = result
         && |, and proxy configuration (|
-        && /apmg/cl_apm_html=>create( )->a(
-          iv_txt   = 'global settings'
-          iv_act   = |{ /apmg/if_apm_gui_router=>c_action-go_settings }|
-          iv_class = 'no-pad' )
+        && |<a href="{ /apmg/if_apm_gui_router=>c_action-go_settings }" class="no-pad">personal settings</a>|
         && |)|.
     ENDIF.
 
@@ -260,8 +244,8 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
       && |. It's recommended to get your SAP Basis and network teams involved. |
       && |For more information and troubleshooting, see the |
       && /apmg/cl_apm_html=>create( )->a(
-        iv_txt   = 'abapGit documentation'
-        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-url }?url={ lc_docs }|
+        iv_txt   = 'apm documentation'
+        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-url }?url={ c_docs }|
         iv_class = 'no-pad' )
       && |.|.
 
@@ -293,8 +277,6 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
     ELSE.
 
-      " TODO: Longtext
-
       cl_http_client=>create_by_destination(
         EXPORTING
           destination              = rfc_destination
@@ -311,9 +293,7 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
     ENDIF.
 
     IF sy-subrc <> 0.
-      DATA(longtext) = get_connection_longtext(
-        host   = /apmg/cl_http_login_manager=>get_host( url )
-        ssl_id = ssl_id ).
+      DATA(longtext) = get_connection_longtext( /apmg/cl_http_login_manager=>get_host( url ) ).
 
       RAISE EXCEPTION TYPE /apmg/cx_error_t100 EXPORTING longtext = longtext.
     ENDIF.

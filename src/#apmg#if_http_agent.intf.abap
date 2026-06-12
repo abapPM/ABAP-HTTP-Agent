@@ -40,7 +40,6 @@ INTERFACE /apmg/if_http_agent PUBLIC.
   METHODS request
     IMPORTING
       !url          TYPE string
-      !ssl_id       TYPE ssfapplssl DEFAULT 'ANONYM'
       !method       TYPE string DEFAULT c_method-get
       !query        TYPE REF TO zcl_abap_string_map OPTIONAL
       !headers      TYPE REF TO zcl_abap_string_map OPTIONAL
