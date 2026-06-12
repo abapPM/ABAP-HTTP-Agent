@@ -15,31 +15,43 @@ CLASS /apmg/cl_http_agent DEFINITION
 
     CLASS-METHODS create
       IMPORTING
-        !proxy_host    TYPE string OPTIONAL
-        !proxy_service TYPE string OPTIONAL
-        !proxy_user    TYPE string OPTIONAL
-        !proxy_passwd  TYPE string OPTIONAL
+        !rfc_destination TYPE rfcdest OPTIONAL
+        !proxy_host      TYPE string OPTIONAL
+        !proxy_service   TYPE string OPTIONAL
+        !proxy_user      TYPE string OPTIONAL
+        !proxy_passwd    TYPE string OPTIONAL
       RETURNING
-        VALUE(result)  TYPE REF TO /apmg/if_http_agent.
+        VALUE(result)    TYPE REF TO /apmg/if_http_agent.
 
     METHODS constructor
       IMPORTING
-        !proxy_host    TYPE string OPTIONAL
-        !proxy_service TYPE string OPTIONAL
-        !proxy_user    TYPE string OPTIONAL
-        !proxy_passwd  TYPE string OPTIONAL.
+        !rfc_destination TYPE rfcdest
+        !proxy_host      TYPE string
+        !proxy_service   TYPE string
+        !proxy_user      TYPE string
+        !proxy_passwd    TYPE string.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
 
     DATA:
-      proxy_host     TYPE string,
-      proxy_service  TYPE string,
-      proxy_user     TYPE string,
-      proxy_passwd   TYPE string,
-      global_headers TYPE REF TO zcl_abap_string_map.
+      rfc_destination TYPE rfcdest,
+      proxy_host      TYPE string,
+      proxy_service   TYPE string,
+      proxy_user      TYPE string,
+      proxy_passwd    TYPE string,
+      global_headers  TYPE REF TO zcl_abap_string_map.
 
-    CLASS-METHODS attach_payload
+    METHODS get_http_client
+      IMPORTING
+        !url          TYPE string
+        !ssl_id       TYPE ssfapplssl
+      RETURNING
+        VALUE(result) TYPE REF TO if_http_client
+      RAISING
+        /apmg/cx_error.
+
+    METHODS attach_payload
       IMPORTING
         request TYPE REF TO if_http_request
         payload TYPE any
@@ -63,32 +75,10 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
   METHOD /apmg/if_http_agent~request.
 
     DATA:
-      http_client TYPE REF TO if_http_client,
       status_code TYPE i,
       message     TYPE string.
 
-    cl_http_client=>create_by_url(
-      EXPORTING
-        url                = url
-        ssl_id             = ssl_id
-        proxy_host         = proxy_host
-        proxy_service      = proxy_service
-        proxy_user         = proxy_user
-        proxy_passwd       = proxy_passwd
-      IMPORTING
-        client             = http_client
-      EXCEPTIONS
-        argument_not_found = 1
-        plugin_not_active  = 2
-        internal_error     = 3
-        pse_not_found      = 4
-        pse_not_distrib    = 5
-        pse_errors         = 6
-        OTHERS             = 7 ).
-
-    IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE /apmg/cx_error_t100.
-    ENDIF.
+    DATA(http_client) = get_http_client( url = url ssl_id = ssl_id ).
 
     http_client->request->set_version( if_http_request=>co_protocol_version_1_1 ).
     http_client->request->set_method( method ).
@@ -122,6 +112,11 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
         request = http_client->request
         payload = payload ).
     ENDIF.
+
+    " If "Authorization" header is set, we could disable login popup
+    " but it's better to show the popup so we can adjust the login flow
+    " i.e. provide
+    " http_client->propertytype_logon_popup = http_client->co_disabled
 
     http_client->send(
       EXCEPTIONS
@@ -190,10 +185,58 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
   METHOD create.
 
     result = NEW /apmg/cl_http_agent(
-      proxy_host    = proxy_host
-      proxy_service = proxy_service
-      proxy_user    = proxy_user
-      proxy_passwd  = proxy_passwd ).
+      rfc_destination = rfc_destination
+      proxy_host      = proxy_host
+      proxy_service   = proxy_service
+      proxy_user      = proxy_user
+      proxy_passwd    = proxy_passwd ).
+
+  ENDMETHOD.
+
+
+  METHOD get_http_client.
+
+    IF rfc_destination IS INITIAL.
+
+      cl_http_client=>create_by_url(
+        EXPORTING
+          url                = url
+          ssl_id             = ssl_id
+          proxy_host         = proxy_host
+          proxy_service      = proxy_service
+          proxy_user         = proxy_user
+          proxy_passwd       = proxy_passwd
+        IMPORTING
+          client             = result
+        EXCEPTIONS
+          argument_not_found = 1
+          plugin_not_active  = 2
+          internal_error     = 3
+          pse_not_found      = 4
+          pse_not_distrib    = 5
+          pse_errors         = 6
+          OTHERS             = 7 ).
+
+    ELSE.
+
+      cl_http_client=>create_by_destination(
+        EXPORTING
+          destination              = rfc_destination
+        IMPORTING
+          client                   = result
+        EXCEPTIONS
+          argument_not_found       = 1
+          destination_not_found    = 2
+          destination_no_authority = 3
+          plugin_not_active        = 4
+          internal_error           = 5
+          OTHERS                   = 6 ).
+
+    ENDIF.
+
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE /apmg/cx_error_t100.
+    ENDIF.
 
   ENDMETHOD.
 ENDCLASS.

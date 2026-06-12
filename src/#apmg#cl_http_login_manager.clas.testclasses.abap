@@ -32,12 +32,17 @@ CLASS ltcl_login_manager IMPLEMENTATION.
     CONSTANTS c_auth TYPE string VALUE 'foobar'.
 
     /apmg/cl_http_login_manager=>save(
-      host = c_host
-      auth = c_auth ).
+      host     = c_host
+      auth     = c_auth
+      username = c_username ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = /apmg/cl_http_login_manager=>get( c_host )
+      act = /apmg/cl_http_login_manager=>get_auth( c_host )
       exp = c_auth ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = /apmg/cl_http_login_manager=>get_username( c_host )
+      exp = c_username ).
 
   ENDMETHOD.
 
@@ -57,8 +62,9 @@ CLASS ltcl_login_manager IMPLEMENTATION.
   METHOD bearer_auth.
 
     DATA(auth) = /apmg/cl_http_login_manager=>set_token(
-      host  = 'https://github.com/abapGit/abapGit.git'
-      token = c_token ).
+      host     = 'https://github.com/abapGit/abapGit.git'
+      token    = c_token
+      username = '' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = auth
@@ -76,8 +82,8 @@ CLASS ltcl_login_manager IMPLEMENTATION.
       username = c_username
       password = c_password ).
 
-    DATA(auth1) = /apmg/cl_http_login_manager=>get( c_github1 ).
-    DATA(auth2) = /apmg/cl_http_login_manager=>get( c_github2 ).
+    DATA(auth1) = /apmg/cl_http_login_manager=>get_auth( c_github1 ).
+    DATA(auth2) = /apmg/cl_http_login_manager=>get_auth( c_github2 ).
 
     cl_abap_unit_assert=>assert_equals(
       act = auth1

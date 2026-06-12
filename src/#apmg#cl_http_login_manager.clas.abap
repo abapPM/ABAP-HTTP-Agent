@@ -11,7 +11,13 @@ CLASS /apmg/cl_http_login_manager DEFINITION
 ************************************************************************
   PUBLIC SECTION.
 
-    CLASS-METHODS get
+    CLASS-METHODS get_auth
+      IMPORTING
+        !host         TYPE csequence
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS get_username
       IMPORTING
         !host         TYPE csequence
       RETURNING
@@ -28,16 +34,20 @@ CLASS /apmg/cl_http_login_manager DEFINITION
     CLASS-METHODS set_token
       IMPORTING
         !host         TYPE csequence
+        !username     TYPE csequence
         !token        TYPE csequence
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS save
       IMPORTING
-        !host TYPE csequence
-        !auth TYPE csequence.
+        !host     TYPE csequence
+        !auth     TYPE csequence
+        !username TYPE csequence OPTIONAL.
 
-    CLASS-METHODS clear.
+    CLASS-METHODS clear
+      IMPORTING
+        !host TYPE csequence OPTIONAL.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -46,6 +56,7 @@ CLASS /apmg/cl_http_login_manager DEFINITION
       BEGIN OF ty_auth,
         host TYPE string,
         auth TYPE string,
+        user TYPE string,
       END OF ty_auth.
 
     CLASS-DATA auths TYPE TABLE OF ty_auth WITH DEFAULT KEY.
@@ -59,7 +70,8 @@ CLASS /apmg/cl_http_login_manager DEFINITION
     CLASS-METHODS append
       IMPORTING
         !host TYPE string
-        !auth TYPE string.
+        !auth TYPE string
+        !user TYPE string.
 
 ENDCLASS.
 
@@ -76,6 +88,7 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
       APPEND INITIAL LINE TO auths ASSIGNING FIELD-SYMBOL(<auth>).
       <auth>-host = hostname.
       <auth>-auth = auth.
+      <auth>-user = user.
     ENDIF.
 
   ENDMETHOD.
@@ -83,12 +96,16 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
 
   METHOD clear.
 
-    CLEAR auths.
+    IF host IS INITIAL.
+      CLEAR auths.
+    ELSE.
+      DELETE auths WHERE host = host ##SUBRC_OK.
+    ENDIF.
 
   ENDMETHOD.
 
 
-  METHOD get.
+  METHOD get_auth.
 
     READ TABLE auths INTO DATA(auth) WITH KEY host = get_host( host ).
     IF sy-subrc = 0.
@@ -115,11 +132,22 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_username.
+
+    READ TABLE auths INTO DATA(auth) WITH KEY host = get_host( host ).
+    IF sy-subrc = 0.
+      result = auth-user.
+    ENDIF.
+
+  ENDMETHOD.
+
+
   METHOD save.
 
     IF auth IS NOT INITIAL.
       append( host = host
-              auth = auth ).
+              auth = auth
+              user = |{ username }| ).
     ENDIF.
 
   ENDMETHOD.
@@ -136,7 +164,8 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
     result = |Basic { cl_http_utility=>encode_base64( |{ username }:{ password }| ) }|.
 
     append( host = host
-            auth = result ).
+            auth = result
+            user = username ).
 
   ENDMETHOD.
 
@@ -152,7 +181,8 @@ CLASS /apmg/cl_http_login_manager IMPLEMENTATION.
     result = |Bearer { token }|.
 
     append( host = host
-            auth = result ).
+            auth = result
+            user = username ).
 
   ENDMETHOD.
 ENDCLASS.
