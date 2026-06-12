@@ -82,7 +82,7 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
   METHOD /apmg/if_http_agent~request.
 
-    DATA(http_client) = get_http_client( url = url ).
+    DATA(http_client) = get_http_client( url ).
 
     http_client->request->set_version( if_http_request=>co_protocol_version_1_1 ).
     http_client->request->set_method( method ).
@@ -219,34 +219,31 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
     result = result
       && |Check system parameters (transaction |
-      && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=RZ10" class="no-pad">RZ10</a>|
+      && |<a href="sapevent:jump_transaction?transaction=RZ10" class="no-pad">RZ10</a>|
       && |), SSL setup (transaction |
-      && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=STRUST" class="no-pad">STRUST</a>|
+      && |<a href="sapevent:jump_transaction?transaction=STRUST" class="no-pad">STRUST</a>|
       && |), Internet connection monitor (transaction |
-      && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SMICM" class="no-pad">SMICM</a>|
+      && |<a href="sapevent:jump_transaction?transaction=SMICM" class="no-pad">SMICM</a>|
       && |)|.
 
     IF rfc_destination IS NOT INITIAL.
       result = result
         && |, and RFC configuration (|
-        && |<a href="{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SM59" class="no-pad">SM59</a>|
+        && |<a href="sapevent:jump_transaction??transaction=SM59" class="no-pad">SM59</a>|
         && |)|.
     ENDIF.
 
     IF proxy IS NOT INITIAL.
       result = result
         && |, and proxy configuration (|
-        && |<a href="{ /apmg/if_apm_gui_router=>c_action-go_settings }" class="no-pad">personal settings</a>|
+        && |<a href="sapevent:go_settings" class="no-pad">personal settings</a>|
         && |)|.
     ENDIF.
 
     result = result
       && |. It's recommended to get your SAP Basis and network teams involved. |
       && |For more information and troubleshooting, see the |
-      && /apmg/cl_apm_html=>create( )->a(
-        iv_txt   = 'apm documentation'
-        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-url }?url={ c_docs }|
-        iv_class = 'no-pad' )
+      && |<a href="sapevent:url?url={ c_docs }" class="no-pad">documentation</a>|
       && |.|.
 
   ENDMETHOD.
