@@ -23,6 +23,12 @@ CLASS /apmg/cl_http_login_manager DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+    CLASS-METHODS get_host
+      IMPORTING
+        !host         TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+
     CLASS-METHODS set_basic
       IMPORTING
         !host         TYPE csequence
@@ -60,12 +66,6 @@ CLASS /apmg/cl_http_login_manager DEFINITION
       END OF ty_auth.
 
     CLASS-DATA auths TYPE TABLE OF ty_auth WITH DEFAULT KEY.
-
-    CLASS-METHODS get_host
-      IMPORTING
-        !host         TYPE string
-      RETURNING
-        VALUE(result) TYPE string.
 
     CLASS-METHODS append
       IMPORTING

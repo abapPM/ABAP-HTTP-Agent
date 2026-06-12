@@ -51,6 +51,13 @@ CLASS /apmg/cl_http_agent DEFINITION
       RAISING
         /apmg/cx_error.
 
+    METHODS get_connection_longtext
+      IMPORTING
+        !host         TYPE string
+        !ssl_id       TYPE ssfapplssl
+      RETURNING
+        VALUE(result) TYPE string.
+
     METHODS attach_payload
       IMPORTING
         request TYPE REF TO if_http_request
@@ -172,10 +179,11 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
   METHOD constructor.
 
-    me->proxy_host    = proxy_host.
-    me->proxy_service = proxy_service.
-    me->proxy_user    = proxy_user.
-    me->proxy_passwd  = proxy_passwd.
+    me->rfc_destination = rfc_destination.
+    me->proxy_host      = proxy_host.
+    me->proxy_service   = proxy_service.
+    me->proxy_user      = proxy_user.
+    me->proxy_passwd    = proxy_passwd.
 
     global_headers = NEW #( ).
 
@@ -190,6 +198,72 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
       proxy_service   = proxy_service
       proxy_user      = proxy_user
       proxy_passwd    = proxy_passwd ).
+
+  ENDMETHOD.
+
+
+  METHOD get_connection_longtext.
+
+    " TODO: Full link
+    CONSTANTS lc_docs TYPE string VALUE 'https://docs.abappm.com/'.
+
+    IF rfc_destination IS INITIAL.
+      IF proxy_host IS NOT INITIAL.
+        DATA(proxy) = | via proxy <b>{ proxy_host }:{ proxy_service }</b>|.
+      ENDIF.
+
+      result = |The system is trying to connect to <b>{ host }</b> |
+        && |using SSL certificates under <b>{ ssl_id }</b>{ proxy }. |.
+    ELSE.
+      result = |The system is trying to connect using RFC destination <b>{ rfc_destination }</b>. |.
+    ENDIF.
+
+    result = result
+      && |Check system parameters (transaction |
+      && /apmg/cl_apm_html=>create( )->a(
+        iv_txt   = 'RZ10'
+        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=RZ10|
+        iv_class = 'no-pad' )
+      && |), SSL setup (transaction |
+      && /apmg/cl_apm_html=>create( )->a(
+        iv_txt   = 'STRUST'
+        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=STRUST|
+        iv_class = 'no-pad' )
+      && |), Internet connection monitor (transaction |
+      && /apmg/cl_apm_html=>create( )->a(
+        iv_txt   = 'SMICM'
+        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SMICM|
+        iv_class = 'no-pad' )
+      && |)|.
+
+    IF rfc_destination IS NOT INITIAL.
+      result = result
+        && |, and RFC configuration (|
+        && /apmg/cl_apm_html=>create( )->a(
+          iv_txt   = 'SM59'
+          iv_act   = |{ /apmg/if_apm_gui_router=>c_action-jump_transaction }?transaction=SM59|
+          iv_class = 'no-pad' )
+        && |)|.
+    ENDIF.
+
+    IF proxy IS NOT INITIAL.
+      result = result
+        && |, and proxy configuration (|
+        && /apmg/cl_apm_html=>create( )->a(
+          iv_txt   = 'global settings'
+          iv_act   = |{ /apmg/if_apm_gui_router=>c_action-go_settings }|
+          iv_class = 'no-pad' )
+        && |)|.
+    ENDIF.
+
+    result = result
+      && |. It's recommended to get your SAP Basis and network teams involved. |
+      && |For more information and troubleshooting, see the |
+      && /apmg/cl_apm_html=>create( )->a(
+        iv_txt   = 'abapGit documentation'
+        iv_act   = |{ /apmg/if_apm_gui_router=>c_action-url }?url={ lc_docs }|
+        iv_class = 'no-pad' )
+      && |.|.
 
   ENDMETHOD.
 
@@ -219,6 +293,8 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
 
     ELSE.
 
+      " TODO: Longtext
+
       cl_http_client=>create_by_destination(
         EXPORTING
           destination              = rfc_destination
@@ -235,7 +311,11 @@ CLASS /apmg/cl_http_agent IMPLEMENTATION.
     ENDIF.
 
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE /apmg/cx_error_t100.
+      DATA(longtext) = get_connection_longtext(
+        host   = /apmg/cl_http_login_manager=>get_host( url )
+        ssl_id = ssl_id ).
+
+      RAISE EXCEPTION TYPE /apmg/cx_error_t100 EXPORTING longtext = longtext.
     ENDIF.
 
   ENDMETHOD.
