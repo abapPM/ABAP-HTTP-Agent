@@ -44,5 +44,10 @@
   "engines": {
     "abap": ">=7.50",
     "apm": ">=1"
+  },
+  "sapPackage": {
+    "default": "/APMG/HTTP-AGENT",
+    "applicationComponent": "BC",
+    "abapLanguageVersion": "standard"
   }
 }
